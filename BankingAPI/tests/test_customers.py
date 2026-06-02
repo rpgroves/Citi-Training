@@ -30,8 +30,16 @@ def test_get_customer_by_id_not_found():
     assert response.status_code == 404
 
 # create customer
-#def test_create_customer():
-#def test_create_customer_invalid():
+def test_create_customer():
+    response = client.post("/api/customers", json={"id": "0", "name": "John Doe", "email": "john.doe@example.com", "accounts": []})
+
+    assert response.status_code == 201
+    assert response.json()["name"] == "John Doe"
+
+def test_create_customer_invalid():
+    response = client.post("/api/customers", json={"id": "0", "name": "", "email": "john.doe@example.com", "accounts": []})
+
+    assert response.status_code == 422
 
 # update customer
 #def test_update_customer():

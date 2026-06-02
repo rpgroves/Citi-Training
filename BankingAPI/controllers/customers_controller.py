@@ -14,11 +14,20 @@ def get_all_customers():
 # get customers by name
 @router.get("/api/customers/search")
 def get_customer_by_name(name: str):
-    return [
+
+    matches = [
         customer
         for customer in customers
         if name.lower() in customer.name.lower()
     ]
+
+    if not matches:
+        raise HTTPException(
+            status_code=404,
+            detail="No customers found with that name"
+        )
+
+    return matches
 
 # get premium customers
 @router.get("/api/customers/premium")
@@ -54,10 +63,8 @@ def get_customer_by_id(id: int):
 @router.post("/api/customers", status_code=201)
 def create_customer(customer: Customer):
 
-    new_id = NEXT_CUSTOMER_ID
-    NEXT_CUSTOMER_ID += 1
-
-    customer.id = new_id
+    customer.id = NEXT_CUSTOMER_ID["value"]
+    NEXT_CUSTOMER_ID["value"] += 1
 
     customers.append(customer)
 
