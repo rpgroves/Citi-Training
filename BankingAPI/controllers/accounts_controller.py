@@ -7,12 +7,12 @@ from config import NEXT_ACCOUNT_ID
 router = APIRouter()
 
 # get all accounts
-@app.get("/api/accounts")
+@router.get("/api/accounts")
 def get_all_accounts():
     return accounts
 
 # get account by id
-@app.get("/api/accounts/{id}")
+@router.get("/api/accounts/{id}")
 def get_account_by_id(id: int):
 
     for account in accounts:
@@ -25,7 +25,7 @@ def get_account_by_id(id: int):
     )
 
 # get account by customer name
-@app.get("/api/accounts/search")
+@router.get("/api/accounts/search")
 def get_accounts_by_name(name: str):
 
     matching_customer_ids = []
@@ -41,7 +41,7 @@ def get_accounts_by_name(name: str):
     ]
 
 # create account
-@app.post("/api/accounts", status_code=201)
+@router.post("/api/accounts", status_code=201)
 def create_account(account: Account):
 
     customer = None
@@ -69,7 +69,7 @@ def create_account(account: Account):
     return account
 
 # update account
-@app.put("/api/accounts/{id}")
+@router.put("/api/accounts/{id}")
 def update_account(id: int, updated_account: Account):
 
     for index, account in enumerate(accounts):
@@ -88,7 +88,7 @@ def update_account(id: int, updated_account: Account):
     )
 
 # delete account
-@app.delete("/api/accounts/{id}")
+@router.delete("/api/accounts/{id}")
 def delete_account(id: int):
 
     account = None

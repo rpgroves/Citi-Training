@@ -7,12 +7,12 @@ from config import PREMIUM_BALANCE, NEXT_CUSTOMER_ID
 router = APIRouter()
 
 # get all customers
-@app.get("/api/customers")
+@router.get("/api/customers")
 def get_all_customers():
     return customers
 
-# get all customers by name
-@app.get("/api/customers/search")
+# get customers by name
+@router.get("/api/customers/search")
 def get_customer_by_name(name: str):
     return [
         customer
@@ -20,8 +20,8 @@ def get_customer_by_name(name: str):
         if name.lower() in customer.name.lower()
     ]
 
-# get all premium customers
-@app.get("/api/customers/premium")
+# get premium customers
+@router.get("/api/customers/premium")
 def get_premium_customers():
 
     premium = []
@@ -33,13 +33,13 @@ def get_premium_customers():
             for account in customer.accounts
         )
 
-        if total_balance >= premium_balance:
+        if total_balance >= PREMIUM_BALANCE:
             premium.append(customer)
 
     return premium
 
-# get all customers by id
-@app.get("/api/customers/{id}")
+# get customers by id
+@router.get("/api/customers/{id}")
 def get_customer_by_id(id: int):
     for customer in customers:
         if customer.id == id:
@@ -51,7 +51,7 @@ def get_customer_by_id(id: int):
     )
 
 # create customer
-@app.post("/api/customers", status_code=201)
+@router.post("/api/customers", status_code=201)
 def create_customer(customer: Customer):
 
     new_id = NEXT_CUSTOMER_ID
@@ -64,7 +64,7 @@ def create_customer(customer: Customer):
     return customer
 
 # update customer
-@app.put("/api/customers/{id}")
+@router.put("/api/customers/{id}")
 def update_customer(id: int, updated_customer: Customer):
 
     for index, customer in enumerate(customers):
@@ -83,7 +83,7 @@ def update_customer(id: int, updated_customer: Customer):
     )
 
 # delete customer
-@app.delete("/api/customers/{id}")
+@router.delete("/api/customers/{id}")
 def delete_customer(id: int):
 
     customer = None

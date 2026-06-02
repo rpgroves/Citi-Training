@@ -6,4 +6,4 @@ class Customer(BaseModel):
     id: int
     name: str
     email: str
-    accounts: List[Account] = []
+    accounts: List[int] = []
