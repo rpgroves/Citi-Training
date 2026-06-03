@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from models.customer import Customer, CustomerCreate
-from routes import get_next_customer_id
-from database import customers_collection, accounts_collection
+from .routes import get_next_customer_id
+from db.database import customers_collection, accounts_collection
 
-from config import PREMIUM_BALANCE
+from core.config import PREMIUM_BALANCE
 
 router = APIRouter()
 

@@ -1,23 +1,17 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
-from datastore import customers, accounts
-from models.customer import Customer
-from models.account import Account
-from seeddata import seed_data
 from contextlib import asynccontextmanager
-from controllers import customers_controller, accounts_controller
-from routes import router
-from database import customers_collection
+from api.routes import customers_controller, accounts_controller, routes
+from db.database import customers_collection
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    seed_data()
     yield
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(customers_controller.router)
 app.include_router(accounts_controller.router)
-app.include_router(router)
+app.include_router(routes.router)
 
 @app.get("/")
 def root():

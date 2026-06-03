@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from datastore import accounts, customers
 from models.account import Account, AccountCreate
-from routes import get_next_account_id
-from database import customers_collection, accounts_collection
+from .routes import get_next_account_id
+from db.database import customers_collection, accounts_collection
 
 router = APIRouter()
 

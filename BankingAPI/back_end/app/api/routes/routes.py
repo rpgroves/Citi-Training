@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from database import customers_collection, accounts_collection
-from database import counters_collection
+from db.database import customers_collection, accounts_collection
+from db.database import counters_collection
 
 router = APIRouter()
 
