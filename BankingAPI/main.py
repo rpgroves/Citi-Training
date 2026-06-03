@@ -7,6 +7,7 @@ from seeddata import seed_data
 from contextlib import asynccontextmanager
 from controllers import customers_controller, accounts_controller
 from routes import router
+from database import customers_collection
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,10 +23,7 @@ app.include_router(router)
 def root():
     return {"message": "Banking API is running"}
 
-
-from database import customers_collection
-
-@app.get("/test-db")
+@app.get("/test-db-connection")
 def test_db():
 
     customers_collection.insert_one({

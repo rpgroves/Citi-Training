@@ -6,3 +6,4 @@ class CustomerCreate(BaseModel):
 
 class Customer(CustomerCreate):
     id: int
+    

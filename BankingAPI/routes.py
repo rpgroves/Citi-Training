@@ -39,7 +39,7 @@ async def create_account_2():
     }
 
 @router.post("/counter")
-async def create_account_2():
+async def create_counters():
 
     customer_counter = {
     "_id": "customer_id",
