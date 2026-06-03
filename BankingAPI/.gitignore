@@ -1,0 +1,63 @@
+# =====================
+# ENV FILES (IMPORTANT)
+# =====================
+.env
+.env.*
+*.env
+
+# =====================
+# PYTHON / FASTAPI
+# =====================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+ENV/
+
+pip-log.txt
+pip-delete-this-directory.txt
+
+# FastAPI / tooling
+*.log
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =====================
+# NODE / REACT (VITE)
+# =====================
+node_modules/
+dist/
+build/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite
+.vite/
+
+# =====================
+# IDEs
+# =====================
+.vscode/
+.idea/
+*.swp
+
+# =====================
+# OS FILES
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# MONGO / LOCAL DB FILES (just in case)
+# =====================
+*.lock
