@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from datastore import customers, accounts
-from models.customer import Customer
+from models.customer import Customer, CustomerCreate
+from routes import get_next_customer_id
+from database import customers_collection, accounts_collection
 
 from config import PREMIUM_BALANCE, NEXT_CUSTOMER_ID
 
@@ -9,16 +10,27 @@ router = APIRouter()
 # get all customers
 @router.get("/api/customers")
 def get_all_customers():
+
+    customers = list(customers_collection.find())
+
+    for customer in customers:
+        customer.pop("_id", None)
+
     return customers
 
 # get customers by name
 @router.get("/api/customers/search")
 def get_customer_by_name(name: str):
 
+    customers = list(customers_collection.find())
+
+    for customer in customers:
+        customer.pop("_id", None)
+
     matches = [
         customer
         for customer in customers
-        if name.lower() in customer.name.lower()
+        if name.lower() in customer["name"].lower()
     ]
 
     if not matches:
@@ -34,12 +46,15 @@ def get_customer_by_name(name: str):
 def get_premium_customers():
 
     premium = []
+    customers = list(customers_collection.find())
+    accounts = list(accounts_collection.find())
 
     for customer in customers:
 
         total_balance = sum(
             account.balance
-            for account in customer.accounts
+            for account in accounts
+            if account.customer_id == customer.id
         )
 
         if total_balance >= PREMIUM_BALANCE:
@@ -50,23 +65,31 @@ def get_premium_customers():
 # get customers by id
 @router.get("/api/customers/{id}")
 def get_customer_by_id(id: int):
-    for customer in customers:
-        if customer.id == id:
-            return customer
+    customer = customers_collection.find_one({"id": id})
 
-    raise HTTPException(
-        status_code=404,
-        detail="Customer not found"
-    )
+    if customer is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Customer not found"
+        )
+
+    customer.pop("id", None)
+
+    return customer
 
 # create customer
-@router.post("/api/customers", status_code=201)
-def create_customer(customer: Customer):
+@router.post("/api/customers", response_model=Customer)
+def create_customer(customer_data: CustomerCreate):
 
-    customer.id = NEXT_CUSTOMER_ID["value"]
-    NEXT_CUSTOMER_ID["value"] += 1
+    customer = Customer(
+        id=get_next_customer_id(),
+        name=customer_data.name,
+        email=customer_data.email,
+    )
 
-    customers.append(customer)
+    customer_dict = customer.model_dump()
+
+    customers_collection.insert_one(customer_dict)
 
     return customer
 

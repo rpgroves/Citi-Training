@@ -1,9 +1,8 @@
 from pydantic import BaseModel
-from typing import List
-from .account import Account
 
-class Customer(BaseModel):
-    id: int
+class CustomerCreate(BaseModel):
     name: str
     email: str
-    accounts: List[int] = []
+
+class Customer(CustomerCreate):
+    id: int

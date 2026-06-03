@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from datastore import accounts, customers
-from models.account import Account
+from models.account import Account, AccountCreate
+from routes import get_next_account_id
+from database import customers_collection, accounts_collection
 
 from config import NEXT_ACCOUNT_ID
 
@@ -9,6 +11,11 @@ router = APIRouter()
 # get all accounts
 @router.get("/api/accounts")
 def get_all_accounts():
+    accounts = list(accounts_collection.find())
+
+    for account in accounts:
+        account.pop("_id", None)
+
     return accounts
 
 # get account by id
@@ -42,29 +49,23 @@ def get_accounts_by_name(name: str):
 
 # create account
 @router.post("/api/accounts", status_code=201)
-def create_account(account: Account):
+def create_account(account_data: AccountCreate):
+    
+    account = Account(
+        id=get_next_account_id(),
+        account_number=account_data.account_number,
+        account_type=account_data.account_type,
+        balance=account_data.balance
+    )
 
-    customer = None
+    account_dict = account.model_dump()
 
-    for c in customers:
-        if c.id == account.customer_id:
-            customer = c
-            break
+    accounts_collection.insert_one(account_dict)
 
-    if customer is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Customer not found"
-        )
-
-    new_id = NEXT_ACCOUNT_ID
-    NEXT_ACCOUNT_ID += 1
-
-    account.id = new_id
-
-    accounts.append(account)
-
-    customer.accounts.append(account)
+    customers_collection.update_one(
+        {"id": account_data.customer_id},
+        {"$push": {"accounts": account.id}}
+    )
 
     return account
 
@@ -109,9 +110,9 @@ def delete_account(id: int):
     for customer in customers:
 
         customer.accounts = [
-            a
-            for a in customer.accounts
-            if a.id != id
+            account_id
+            for account_id in customer.accounts
+            if account_id != id
         ]
 
     return {
